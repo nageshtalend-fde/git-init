@@ -1,0 +1,32 @@
+name: Deploy Databricks with Terraform (SP Auth)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan \
+          -var="client_id=${{ secrets.CLIENT_ID }}" \
+          -var="client_secret=${{ secrets.CLIENT_SECRET }}" \
+          -var="tenant_id=${{ secrets.TENANT_ID }}"
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve \
+          -var="client_id=${{ secrets.CLIENT_ID }}" \
+          -var="client_secret=${{ secrets.CLIENT_SECRET }}" \
+          -var="tenant_id=${{ secrets.TENANT_ID }}"
